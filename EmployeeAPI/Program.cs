@@ -1,4 +1,4 @@
-using EmployeeAPI.Services;
+using EmployeeAPI.Services; // Assuming this is where your ApplicationDbContext is
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +15,18 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// *** Add this code to configure CORS to allow all origins ***
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins", // You can choose any name for your policy
+        policy =>
+        {
+            policy.AllowAnyOrigin()
+                   .AllowAnyHeader()
+                   .AllowAnyMethod();
+        });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -25,6 +37,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// *** Add this middleware to enable CORS ***
+app.UseCors("AllowAllOrigins"); // Apply the CORS policy here, before authorization
 
 app.UseAuthorization();
 
